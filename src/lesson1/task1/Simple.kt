@@ -33,7 +33,7 @@ fun quadraticEquationRoot(a: Double, b: Double, c: Double) =
         (-b + sqrt(discriminant(a, b, c))) / (2 * a)
 
 /**
-
+ * Пример
  *
  * Поиск произведения корней квадратного уравнения
  */
