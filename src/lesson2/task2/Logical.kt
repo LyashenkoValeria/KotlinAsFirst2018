@@ -40,10 +40,10 @@ fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean =
  * Вернуть число дней в этом месяце этого года по григорианскому календарю.
  */
 fun daysInMonth(month: Int, year: Int): Int {
-    when (month) {
-        4, 6, 9, 11 -> return (30)
-        2 -> if ((year % 4 == 0) && (year % 100 != 0) || (year % 400 == 0)) return (29) else return (28)
-        else -> return (31)
+    return when (month) {
+        4, 6, 9, 11 -> (30)
+        2 -> if ((year % 4 == 0) && (year % 100 != 0) || (year % 400 == 0)) (29) else (28)
+        else -> (31)
     }
 }
 
@@ -56,7 +56,8 @@ fun daysInMonth(month: Int, year: Int): Int {
  * Вернуть true, если утверждение верно
  */
 fun circleInside(x1: Double, y1: Double, r1: Double,
-                 x2: Double, y2: Double, r2: Double): Boolean = sqrt(sqr(x2 - x1) + sqr(y2 - y1)) <= (r2 - r1)
+                 x2: Double, y2: Double, r2: Double): Boolean =
+        sqrt(sqr(x2 - x1) + sqr(y2 - y1)) <= (r2 - r1)
 
 /**
  * Средняя
