@@ -6,6 +6,7 @@ import lesson1.task1.discriminant
 import lesson1.task1.sqr
 import kotlin.math.abs
 import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.sqrt
 
 /**
@@ -65,8 +66,10 @@ fun minBiRoot(a: Double, b: Double, c: Double): Double {
  * Мой возраст. Для заданного 0 < n < 200, рассматриваемого как возраст человека,
  * вернуть строку вида: «21 год», «32 года», «12 лет».
  */
-fun ageDescription(age: Int): String = if ((age % 10 == 1) && (age % 100 != 11)) "$age год"
-else if ((age % 10 in 2..4) && (age % 100 !in 12..14)) "$age года" else "$age лет"
+fun ageDescription(age: Int): String =
+        if ((age % 10 == 1) && (age % 100 != 11)) "$age год"
+        else if ((age % 10 in 2..4) && (age % 100 !in 12..14)) "$age года"
+        else "$age лет"
 
 /**
  * Простая
@@ -82,8 +85,9 @@ fun timeForHalfWay(t1: Double, v1: Double,
     val s2 = t2 * v2
     val s3 = t3 * v3
     val halfWay = (s1 + s2 + s3) / 2
-    if (s1 > halfWay) return (halfWay / v1) else
-        if ((s1 < halfWay) && (halfWay < s1 + s2)) return (t1 + (halfWay - s1) / v2) else return (t1 + t2 + (halfWay - s1 - s2) / v3)
+    return if (s1 > halfWay) (halfWay / v1)
+    else if ((s1 < halfWay) && (halfWay < s1 + s2)) (t1 + (halfWay - s1) / v2)
+    else (t1 + t2 + (halfWay - s1 - s2) / v3)
 
 }
 
@@ -99,7 +103,7 @@ fun timeForHalfWay(t1: Double, v1: Double,
 fun whichRookThreatens(kingX: Int, kingY: Int,
                        rookX1: Int, rookY1: Int,
                        rookX2: Int, rookY2: Int): Int {
-    var x: Int = 0
+    var x = 0
     if ((kingX == rookX1) || (kingY == rookY1)) x += 1
     if ((kingX == rookX2) || (kingY == rookY2)) x += 2
     return x
@@ -118,7 +122,7 @@ fun whichRookThreatens(kingX: Int, kingY: Int,
 fun rookOrBishopThreatens(kingX: Int, kingY: Int,
                           rookX: Int, rookY: Int,
                           bishopX: Int, bishopY: Int): Int {
-    var x: Int = 0
+    var x = 0
     if ((kingX == rookX) || (kingY == rookY)) x += 1
     if (abs(bishopX - kingX) == abs(bishopY - kingY)) x += 2
     return x
@@ -149,9 +153,10 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
         b1 = a
         c1 = b
     }
-    if ((a + b <= c) || (a + c <= b) || (b + c <= a)) return (-1) else
-        if (sqr(a1) == sqr(b1) + sqr(c1)) return (1) else
-            if (sqr(a1) < sqr(b1) + sqr(c1)) return (0) else return (2)
+    return if ((a + b <= c) || (a + c <= b) || (b + c <= a)) (-1)
+    else if (sqr(a1) == sqr(b1) + sqr(c1)) (1)
+    else if (sqr(a1) < sqr(b1) + sqr(c1)) (0)
+    else (2)
 }
 
 /**
@@ -162,12 +167,5 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
  * Найти длину пересечения отрезков AB и CD.
  * Если пересечения нет, вернуть -1.
  */
-fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int {
-    if ((c > b) && (d > b) || (d < a) && (d < b)) return (-1) else
-        when {
-            (b in c..d) && (a !in c..d) -> return (b - c)
-            (d in a..b) && (c !in a..b) -> return (d-a)
-            (c in a..b) && (d in a..b)  -> return (d-c)
-            else -> return (b-a)
-        }
-}
+fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int = if ((c > b) && (d > b) || (d < a) && (d < b))  -1
+else min(b,d)-max(a,c)
