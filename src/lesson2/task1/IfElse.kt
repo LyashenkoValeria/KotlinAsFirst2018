@@ -158,6 +158,7 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
     else if (sqr(a1) < sqr(b1) + sqr(c1)) (0)
     else (2)
 }
+
 /**
  * Средняя
  *
