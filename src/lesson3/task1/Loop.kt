@@ -213,7 +213,7 @@ fun sin(x: Double, eps: Double): Double {
     var sin = 0.0
     var x1 = x
     var n = 1
-    if (x > 2* PI) x1 = x - (x / (2 * PI) * 2 * PI)
+    if (x > 2 * PI) x1 = x - (x / (2 * PI) * 2 * PI)
     while (abs(x1) >= eps) {
         sin += x1
         x1 = (-1.0).pow(n) * x.pow(2 * n + 1) / factorial(2 * n + 1)
@@ -284,6 +284,7 @@ fun isPalindrome(n: Int): Boolean {
     }
     return (m == 0)
 }
+
 /**
  * Средняя
  *
@@ -292,7 +293,19 @@ fun isPalindrome(n: Int): Boolean {
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun hasDifferentDigits(n: Int): Boolean = TODO()
+fun hasDifferentDigits(n: Int): Boolean {
+    var n1 = n
+    var count = 0
+    val digit = n % 10
+    while (n1 > 0) {
+        if (n1 % 10 != digit) {
+            count = 1
+            break
+        }
+        n1 /= 10
+    }
+    return count == 1
+}
 
 /**
  * Сложная
@@ -303,7 +316,24 @@ fun hasDifferentDigits(n: Int): Boolean = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun squareSequenceDigit(n: Int): Int = TODO()
+fun squareSequenceDigit(n: Int): Int {
+    var count = 0
+    var i = 0
+    var square: Int
+    while (count < n) {
+        i++
+        square = sqr(i)
+        while (square > 0) {
+            count++
+            square /= 10
+        }
+    }
+    square = sqr(i)
+    return if (count - n == 0) (square % 10) else {
+        for (j in 1..(count - n)) square /= 10
+        square % 10
+    }
+}
 
 /**
  * Сложная
@@ -314,4 +344,28 @@ fun squareSequenceDigit(n: Int): Int = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun fibSequenceDigit(n: Int): Int = TODO()
+fun fibSequenceDigit(n: Int): Int {
+    var count = 2
+    var fib1 = 1
+    var fib2 = 1
+    var fib = 1
+    var remember = fib
+    while (count < n) {
+        fib = fib1 + fib2
+        fib2 = fib1
+        fib1 = fib
+        remember = fib
+        while (fib > 0) {
+            count++
+            fib /= 10
+        }
+    }
+    fib = remember
+    return if (n < 3) 1 else
+        if (count - n == 0) {
+            (fib % 10)
+        } else {
+            for (j in 1..(count - n)) fib /= 10
+            fib % 10
+        }
+}
