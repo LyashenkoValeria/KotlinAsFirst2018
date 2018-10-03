@@ -197,7 +197,7 @@ fun collatzSteps(x: Int): Int {
     while (x1 != 1) {
         count++
         if (x1 % 2 == 0) x1 /= 2
-        else x1 =x1 * 3 + 1
+        else x1 = x1 * 3 + 1
     }
     return count
 }
