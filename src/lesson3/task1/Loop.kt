@@ -88,12 +88,12 @@ fun fib(n: Int): Int {
     var fib1 = 1
     var fib2 = 1
     var fib = 1
-    if (n > 2) for (i in 3..n) {
+    for (i in 3..n) {
         fib = fib1 + fib2
         fib2 = fib1
         fib1 = fib
     }
-    return (fib)
+    return fib
 }
 
 /**
@@ -109,7 +109,7 @@ fun lcm(m: Int, n: Int): Int {
         if (n1 > m1) n1 = max(n1, m1) - min(n1, m1)
         else m1 = max(n1, m1) - min(n1, m1)
     }
-    return (n1 * n / n1 * m / n1)
+    return n * m / n1
 }
 
 /**
@@ -212,12 +212,12 @@ fun collatzSteps(x: Int): Int {
 fun sin(x: Double, eps: Double): Double {
     var sin = 0.0
     var x1 = x
-    var n = 1
-    if (x > 2 * PI) x1 = x - ((x / (2 * PI)) * 2 * PI)
-    else if (x < -2 * PI) x1 = x + ((x / (2 * PI)) * 2 * PI)
-    while (abs(x1) >= eps) {
-        sin += x1
-        x1 = (-1.0).pow(n) * x.pow(2 * n + 1) / factorial(2 * n + 1)
+    var adden = 1.0
+    var n = 0
+    if ((x > 2 * PI) || (x < -2 * PI)) x1 = x % (2 * PI)
+    while (abs(adden) >= eps) {
+        adden = (-1.0).pow(n) * x1.pow(2 * n + 1) / factorial(2 * n + 1)
+        sin += adden
         n++
     }
     return sin
@@ -232,14 +232,13 @@ fun sin(x: Double, eps: Double): Double {
  */
 fun cos(x: Double, eps: Double): Double {
     var cos = 0.0
-    var x1 = 1.0
-    var n = 1
-    var x2 = x
-    if (x > 2 * PI) x2 = x - ((x / (2 * PI)) * 2 * PI)
-    else if (x < -2 * PI) x2 = x + ((x / (2 * PI)) * 2 * PI)
-    while (abs(x1) >= eps) {
-        cos += x1
-        x1 = (-1.0).pow(n) * x2.pow(2 * n) / factorial(2 * n)
+    var x1 = x
+    var n = 0
+    var adden = 1.0
+    if ((x > 2 * PI) || (x < -2 * PI)) x1 = x % (2 * PI)
+    while (abs(adden) >= eps) {
+        adden = (-1.0).pow(n) * x1.pow(2 * n) / factorial(2 * n)
+        cos += adden
         n++
     }
     return cos
@@ -272,12 +271,9 @@ fun revert(n: Int): Int {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun isPalindrome(n: Int): Boolean {
-    var m = 0
+    var m : Int
     var n1 = n
-    while (n1 > 0) {
-        m = m * 10 + n1 % 10
-        n1 /= 10
-    }
+    m = revert(n1)
     n1 = n
     while (m > 0) {
         if (m % 10 != n1 % 10) break
@@ -331,10 +327,7 @@ fun squareSequenceDigit(n: Int): Int {
         }
     }
     square = sqr(i)
-    return if (count - n == 0) (square % 10) else {
-        for (j in 1..(count - n)) square /= 10
-        square % 10
-    }
+    return conclusion (count, n, square)
 }
 
 /**
@@ -363,11 +356,15 @@ fun fibSequenceDigit(n: Int): Int {
         }
     }
     fib = remember
-    return if (n < 3) 1 else
-        if (count - n == 0) {
-            (fib % 10)
-        } else {
-            for (j in 1..(count - n)) fib /= 10
-            fib % 10
-        }
+    return if (n < 3) 1 else conclusion(count, n, fib)
+
+}
+
+fun conclusion(count: Int, n: Int, request: Int): Int {
+    var result = request
+    return if (count - n == 0) (result % 10)
+    else {
+        for (j in 1..(count - n)) result /= 10
+        result % 10
+    }
 }
