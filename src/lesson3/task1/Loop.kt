@@ -271,16 +271,8 @@ fun revert(n: Int): Int {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun isPalindrome(n: Int): Boolean {
-    var m : Int
-    var n1 = n
-    m = revert(n1)
-    n1 = n
-    while (m > 0) {
-        if (m % 10 != n1 % 10) break
-        m /= 10
-        n1 /= 10
-    }
-    return (m == 0)
+    val m: Int = revert(n)
+    return m == n
 }
 
 /**
@@ -327,7 +319,7 @@ fun squareSequenceDigit(n: Int): Int {
         }
     }
     square = sqr(i)
-    return conclusion (count, n, square)
+    return searchDigit(count - n, square)
 }
 
 /**
@@ -356,15 +348,15 @@ fun fibSequenceDigit(n: Int): Int {
         }
     }
     fib = remember
-    return if (n < 3) 1 else conclusion(count, n, fib)
+    return if (n < 3) 1 else searchDigit(count - n, fib)
 
 }
 
-fun conclusion(count: Int, n: Int, request: Int): Int {
-    var result = request
-    return if (count - n == 0) (result % 10)
+fun searchDigit(k: Int, number: Int): Int {
+    var result = number
+    return if (k == 0) result % 10
     else {
-        for (j in 1..(count - n)) result /= 10
+        for (j in 1..k) result /= 10
         result % 10
     }
 }
