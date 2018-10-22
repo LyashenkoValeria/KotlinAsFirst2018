@@ -254,6 +254,7 @@ fun convert(n: Int, base: Int): List<Int> {
     var n1 = n
     val list = mutableListOf<Int>()
     val number = mutableListOf<Int>()
+    if (n == 0) list.add(0)
     while (n1 > 0) {
         number.add(n1 % base)
         n1 /= base
@@ -279,6 +280,7 @@ fun convertToString(n: Int, base: Int): String {
     var ch: Char
     var list = ""
     val number = mutableListOf<Int>()
+    if (n == 0) list = "0"
     while (n1 > 0) {
         number.add(n1 % base)
         n1 /= base
