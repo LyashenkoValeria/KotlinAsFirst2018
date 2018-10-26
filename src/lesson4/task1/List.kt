@@ -204,6 +204,7 @@ fun accumulate(list: MutableList<Double>): MutableList<Double> {
 }
 
 /**
+ * 
  * Средняя
  *
  * Разложить заданное натуральное число n > 1 на простые множители.
