@@ -119,13 +119,9 @@ fun buildSumExample(list: List<Int>) = list.joinToString(separator = " + ", post
  * по формуле abs = sqrt(a1^2 + a2^2 + ... + aN^2).
  * Модуль пустого вектора считать равным 0.0.
  */
-fun abs(v: List<Double>): Double {
-    var sum = 0.0
-    for (element in v) {
-        sum += sqr(element)
-    }
-    return sqrt(sum)
-}
+fun abs(v: List<Double>): Double = sqrt(v.fold(0.0) { previousResult, element ->
+    previousResult + sqr(element)
+})
 
 /**
  * Простая
@@ -137,7 +133,7 @@ fun mean(list: List<Double>): Double {
     for (element in list) {
         sum += element
     }
-    return if (list.size == 0) 0.0 else sum / list.size
+    return if (list.isEmpty()) 0.0 else sum / list.size
 }
 
 /**
@@ -149,11 +145,7 @@ fun mean(list: List<Double>): Double {
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
 fun center(list: MutableList<Double>): MutableList<Double> {
-    var average = 0.0
-    for (element in list) {
-        average += element
-    }
-    if (list.size != 0) average /= list.size
+    val average = mean(list)
     for (i in 0 until list.size) {
         list[i] -= average
     }
@@ -168,11 +160,10 @@ fun center(list: MutableList<Double>): MutableList<Double> {
  * C = a1b1 + a2b2 + ... + aNbN. Произведение пустых векторов считать равным 0.0.
  */
 fun times(a: List<Double>, b: List<Double>): Double {
-    var c = 0.0
-    for (i in 0 until a.size) {
-        c += a[i] * b[i]
+    val c = a.zip(b) { a, b -> a * b }
+    return c.fold(0.0) { previousResult, element ->
+        previousResult + element
     }
-    return c
 }
 
 /**
@@ -184,11 +175,13 @@ fun times(a: List<Double>, b: List<Double>): Double {
  * Значение пустого многочлена равно 0.0 при любом x.
  */
 fun polynom(p: List<Double>, x: Double): Double {
-    var poly = 0.0
-    for (i in 0 until p.size) {
-        poly += p[i] * x.pow(i)
+    val poly = p.toMutableList()
+    for ((index, value) in p.withIndex()) {
+        poly[index] = x.pow(index) * value
     }
-    return poly
+    return poly.fold(0.0) { previousResult, element ->
+        previousResult + element
+    }
 }
 
 /**
@@ -222,10 +215,11 @@ fun factorize(n: Int): List<Int> {
     var n1 = n
     if (isPrime(n)) factor.add(n)
     else for (i in 2..n / 2) {
-        if (isPrime(i)) while (n1 % i == 0) {
-            factor.add(i)
-            n1 /= i
-        }
+        if (isPrime(i))
+            while (n1 % i == 0) {
+                factor.add(i)
+                n1 /= i
+            }
         if (n1 == 1) break
     }
     return factor
@@ -252,17 +246,13 @@ fun factorizeToString(n: Int): String {
  */
 fun convert(n: Int, base: Int): List<Int> {
     var n1 = n
-    val list = mutableListOf<Int>()
     val number = mutableListOf<Int>()
-    if (n == 0) list.add(0)
+    if (n == 0) number.add(0)
     while (n1 > 0) {
         number.add(n1 % base)
         n1 /= base
     }
-    for (i in number.size - 1 downTo 0) {
-        list.add(number[i])
-    }
-    return list
+    return number.reversed()
 }
 
 /**
@@ -277,21 +267,18 @@ fun convertToString(n: Int, base: Int): String {
     val string = "abcdefghijklmnopqrstuvwxyz"
     val count = "0123456789"
     var n1 = n
-    var ch: Char
-    var list = ""
+    val list = StringBuilder()
     val number = mutableListOf<Int>()
-    if (n == 0) list = "0"
+    if (n == 0) list.append("0")
     while (n1 > 0) {
         number.add(n1 % base)
         n1 /= base
     }
-
     for (i in number.size - 1 downTo 0) {
-        if (number[i] > 9) ch = string[number[i] - 10]
-        else ch = count[number[i]]
-        list += ch
+        if (number[i] > 9) list.append(string[number[i] - 10])
+        else list.append(count[number[i]])
     }
-    return list
+    return list.toString()
 }
 
 /**
@@ -324,13 +311,11 @@ fun decimalFromString(str: String, base: Int): Int {
     val string = "abcdefghijklmnopqrstuvwxyz"
     val count = "0123456789"
     val digit = mutableListOf<Int>()
-    var symbol: Char
     for (i in 0 until str.length) {
-        symbol = str[i]
+        val symbol = str[i]
         if (symbol in string) digit.add(string.indexOf(symbol, 0) + 10)
         else if (symbol in count) digit.add(count.indexOf(symbol, 0))
     }
-    digit.toList()
     return decimal(digit, base)
 }
 
@@ -345,7 +330,7 @@ fun decimalFromString(str: String, base: Int): Int {
 fun roman(n: Int): String {
     var n1 = n
     val digit = "MDCLXVI"
-    var number = ""
+    val number = StringBuilder()
     var c = 0
     var count: Int
     var tens = 1000
@@ -354,23 +339,23 @@ fun roman(n: Int): String {
         if (c % 2 == 0) {
             if (count > 0) {
                 for (i in 1..count) {
-                    number += digit[c]
+                    number.append(digit[c])
                 }
                 n1 %= tens
             }
             if ((n1 > 1) && (n1 / (tens / 10) == 9)) {
-                number += digit[c + 2]
-                number += digit[c]
+                number.append(digit[c + 2])
+                number.append(digit[c])
                 n1 %= (tens - tens / 10)
             }
         } else {
             if (count == 1) {
-                number += digit[c]
+                number.append(digit[c])
                 n1 %= tens
             }
             if (n1 / (tens * 2 / 10) == 4) {
-                number += digit[c + 1]
-                number += digit[c]
+                number.append(digit[c + 1])
+                number.append(digit[c])
                 n1 %= (tens - tens / 5)
             }
         }
@@ -378,7 +363,7 @@ fun roman(n: Int): String {
         else tens /= 5
         c++
     }
-    return number
+    return number.toString()
 }
 
 /**
@@ -389,9 +374,51 @@ fun roman(n: Int): String {
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
 fun russian(n: Int): String {
-    var word = ""
+    val word = StringBuilder()
     var n1 = 1000000
     val list = mutableListOf<Int>()
+    val c = listOf("",
+            "сто ",
+            "двести ",
+            "триста ",
+            "четыреста ",
+            "пятьсот ",
+            "шестьсот ",
+            "семьсот ",
+            "восемьсот ",
+            "девятьсот ",
+            "десять ",
+            "одиннадцать ",
+            "двенадцать ",
+            "тринадцать ",
+            "четырнадцать ",
+            "пятнадцать ",
+            "шестнадцать ",
+            "семнадцать ",
+            "восемнадцать ",
+            "девятнадцать ",
+            "двадцать ",
+            "тридцать ",
+            "сорок ",
+            "пятьдесят ",
+            "шестьдесят ",
+            "семьдесят ",
+            "восемьдесят ",
+            "девяносто ",
+            "одна ",
+            "один ",
+            "две ",
+            "два ",
+            "три ",
+            "четыре ",
+            "пять ",
+            "шесть ",
+            "семь ",
+            "восемь ",
+            "девять ",
+            "тысяча ",
+            "тысячи ",
+            "тысяч ")
     n1 += n
     n1 = n1 * 10 + 1
     n1 = revert(n1)
@@ -400,70 +427,29 @@ fun russian(n: Int): String {
         list.add(n1 % 10)
         n1 /= 10
     }
+
     for (i in 0..5) {
-        if (i == 0 || i == 3) {
-            word += when (list[i]) {
-                1 -> "сто "
-                2 -> "двести "
-                3 -> "триста "
-                4 -> "четыреста "
-                5 -> "пятьсот "
-                6 -> "шестьсот "
-                7 -> "семьсот "
-                8 -> "восемьсот "
-                9 -> "девятьсот "
-                else -> ""
-            }
-        }
+        if (i == 0 || i == 3) word.append(c[list[i]])
         if (i == 1 || i == 4) {
-            word += when (list[i]) {
-                1 -> {
-                    when (list[i + 1]) {
-                        0 -> "десять "
-                        1 -> "одиннадцать "
-                        2 -> "двенадцать "
-                        3 -> "тринадцать "
-                        4 -> "четырнадцать "
-                        5 -> "пятнадцать "
-                        6 -> "шестнадцать "
-                        7 -> "семнадцать "
-                        8 -> "восемнадцать "
-                        9 -> "девятнадцать "
-                        else -> ""
-                    }
-                }
-                2 -> "двадцать "
-                3 -> "тридцать "
-                4 -> "сорок "
-                5 -> "пятьдесят "
-                6 -> "шестьдесят "
-                7 -> "семьдесят "
-                8 -> "восемьдесят "
-                9 -> "девяносто "
-                else -> ""
-            }
+            if (list[i] == 1) word.append(c[10 + list[i + 1]])
+            else if (list[i] > 1) word.append(c[18 + list[i]])
+            else word.append(c[0])
         }
         if ((i == 2 || i == 5) && (list[i - 1] != 1)) {
-            word += when (list[i]) {
-                1 -> if (i == 2) "одна " else "один "
-                2 -> if (i == 2) "две " else "два "
-                3 -> "три "
-                4 -> "четыре "
-                5 -> "пять "
-                6 -> "шесть "
-                7 -> "семь "
-                8 -> "восемь "
-                9 -> "девять "
-                else -> ""
-            }
+            if (list[i] > 2) word.append(c[29 + list[i]])
+            else word.append(when (list[i]) {
+                1 -> if (i == 2) c[28] else c[29]
+                2 -> if (i == 2) c[30] else c[31]
+                else -> c[0]
+            })
         }
         if ((i == 2) && (list[0] != 0 || list[1] != 0 || list[2] != 0)) {
-            word += when (list[i]) {
-                1 -> if (list[1] != 1) "тысяча " else "тысяч "
-                2, 3, 4 -> "тысячи "
-                else -> "тысяч "
-            }
+            word.append (when (list[i]) {
+                1 -> if (list[1] != 1) c[39] else c[41]
+                2, 3, 4 -> if (list[1] != 1) c[40] else c[41]
+                else -> c[41]
+            })
         }
     }
-    return word.trim()
+    return word.toString().trim()
 }
