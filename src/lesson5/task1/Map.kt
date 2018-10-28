@@ -294,7 +294,7 @@ fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>): Unit {
 fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
     val people = mutableListOf<String>()
     for (element in a) {
-        if (element in b) people.add(element)
+        if ((element in b) && (element !in people)) people.add(element)
     }
     return people
 }
@@ -311,10 +311,10 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
 fun canBuildFrom(chars: List<Char>, word: String): Boolean {
     val word1 = mutableListOf<Char>()
     for (i in 0 until word.length) {
-        if (word[i] !in word1) word1.add(word[i])
+        if (word[i] !in word1) word1.add(word[i].toLowerCase())
     }
     for (element in chars) {
-        if (element in word1) word1.remove(element)
+        if (element.toLowerCase() in word1) word1.remove(element.toLowerCase())
     }
     return word1.isEmpty()
 }
@@ -332,14 +332,14 @@ fun canBuildFrom(chars: List<Char>, word: String): Boolean {
  *   extractRepeats(listOf("a", "b", "a")) -> mapOf("a" to 2)
  */
 fun extractRepeats(list: List<String>): Map<String, Int> {
-    val repeat = mutableMapOf<String, Int>()
+    var repeat = mutableMapOf<String, Int>()
     var f = 0
     for (element in list) {
         if (element !in repeat) repeat[element] = 1
         else repeat[element] = repeat[element]!! + 1
     }
     for ((a, b) in repeat) {
-        if (b == 1) f++
+        if (repeat[a]!! == 1) f++
     }
     if (f == repeat.size) return emptyMap()
     else {
@@ -423,7 +423,7 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
 fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {
     val map = treasures.toMutableMap()
     val inventory = mutableSetOf<String>()
-    val mass = capacity
+    var mass = capacity
     var value = -1
     var name = ""
     var weight = 0
@@ -435,7 +435,10 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
                 weight = b.first
             }
         }
-        if (mass - weight >= 0) inventory.add(name)
+        if (mass - weight >= 0) {
+            inventory.add(name)
+            mass = mass - weight
+        }
         value = -1
         map.remove(name)
     }
