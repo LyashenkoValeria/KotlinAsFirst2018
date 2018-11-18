@@ -95,15 +95,14 @@ fun buildWordSet(text: List<String>): MutableSet<String> {
  *   ) -> mapOf("Emergency" to "112, 911", "Police" to "02")
  */
 fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> {
-    val phone = mutableMapOf<String, MutableList<String>>()
+    val phone = mutableMapOf<String, MutableSet<String>>()
     val phone1 = mutableMapOf<String, String>()
     for ((a, b) in mapA) {
-        if (a !in phone) phone[a] = mutableListOf(b) else
-            if ((a in phone) && (b !in phone[a]!!)) phone[a]!!.add(b)
+        phone.getOrPut(a, ::mutableSetOf).add(b)
     }
     for ((a, b) in mapB) {
-        if (a !in phone) phone[a] = mutableListOf(b) else
-            if ((a in phone) && (b !in phone[a]!!)) phone[a]!!.add(b)
+        if (a !in phone) phone.getOrPut(a, ::mutableSetOf).add(b) else
+            if ((a in phone) && (b !in phone[a]!!)) phone.getOrPut(a, ::mutableSetOf).add(b)
     }
     for ((a, b) in phone) {
         phone1[a] = b.joinToString(separator = ", ")
