@@ -2,6 +2,8 @@
 
 package lesson5.task1
 
+import kotlin.math.max
+
 /**
  * Пример
  *
@@ -101,13 +103,12 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
         phone.getOrPut(a, ::mutableSetOf).add(b)
     }
     for ((a, b) in mapB) {
-        if (a !in phone) phone.getOrPut(a, ::mutableSetOf).add(b) else
-            if ((a in phone) && (b !in phone[a]!!)) phone.getOrPut(a, ::mutableSetOf).add(b)
+        phone.getOrPut(a, ::mutableSetOf).add(b)
     }
     for ((a, b) in phone) {
         phone1[a] = b.joinToString(separator = ", ")
     }
-    return phone1.toMap()
+    return phone1
 }
 
 /**
@@ -123,13 +124,12 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
 fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
     val marks = mutableMapOf<Int, MutableList<String>>()
     for ((surname, m) in grades) {
-        if (m !in marks) marks[m] = mutableListOf(surname)
-        else {
-            marks[m]!!.add(surname)
-            marks[m] = marks[m]!!.sortedDescending().toMutableList()
-        }
+        marks.getOrPut(m, ::mutableListOf).add(surname)
     }
-    return marks.toMap()
+    for ((key, value) in marks) {
+        marks[key] = value.sortedDescending().toMutableList()
+    }
+    return marks
 }
 
 /**
@@ -145,8 +145,7 @@ fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
 fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
     var f = 0
     for ((key, value) in a) {
-        if (key in b)
-            if (value == b[key]) f++
+        if (value == b[key]) f++
     }
     return f == a.size
 }
@@ -205,7 +204,7 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
             name = a
         }
     }
-    if (cost.isEmpty()) return null
+    return if (cost.isEmpty()) null
     else {
         for ((a, b) in cost) {
             if (b < price) {
@@ -213,7 +212,7 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
                 name = a
             }
         }
-        return name
+        name
     }
 }
 
@@ -246,7 +245,7 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
     val name = mutableMapOf<String, Set<String>>()
     var noFriends = setOf<String>()
     for ((a, b) in friends) {
-        noFriends +=a
+        noFriends += a
         if (b.isEmpty()) name[a] = setOf() else {
             hands = b
             for (element in b) {
@@ -259,7 +258,7 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
             name[a] = (hands - a)
         }
     }
-    for (element in noFriends){
+    for (element in noFriends) {
         if (element !in name) name[element] = setOf()
     }
     return name.toMap()
@@ -281,7 +280,7 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
  */
 fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>): Unit {
     for ((key, value) in b) {
-        if ((key in a) && (a[key] == value)) a.remove(key)
+        if (a[key] == value) a.remove(key)
     }
 }
 
@@ -308,14 +307,14 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
  *   canBuildFrom(listOf('a', 'b', 'o'), "baobab") -> true
  */
 fun canBuildFrom(chars: List<Char>, word: String): Boolean {
-    val word1 = mutableListOf<Char>()
+    val details = mutableSetOf<Char>()
     for (i in 0 until word.length) {
-        if (word[i] !in word1) word1.add(word[i].toLowerCase())
+        details.add(word[i].toLowerCase())
     }
     for (element in chars) {
-        if (element.toLowerCase() in word1) word1.remove(element.toLowerCase())
+        if (element.toLowerCase() in details) details.remove(element.toLowerCase())
     }
-    return word1.isEmpty()
+    return details.isEmpty()
 }
 
 /**
@@ -331,22 +330,18 @@ fun canBuildFrom(chars: List<Char>, word: String): Boolean {
  *   extractRepeats(listOf("a", "b", "a")) -> mapOf("a" to 2)
  */
 fun extractRepeats(list: List<String>): Map<String, Int> {
-    var repeat = mutableMapOf<String, Int>()
-    var f = 0
+    val repeat = mutableMapOf<String, Int>()
+    var keys = mutableListOf<String>()
     for (element in list) {
-        if (element !in repeat) repeat[element] = 1
-        else repeat[element] = repeat[element]!! + 1
+        repeat[element] = repeat.getOrDefault(element, 0) + 1
     }
     for ((a, b) in repeat) {
-        if (repeat[a]!! == 1) f++
+        if (b == 1) keys.add(a)
     }
-    if (f == repeat.size) return emptyMap()
-    else {
-        for ((a, b) in repeat) {
-            if (b == 1) repeat.remove(a)
-        }
-        return repeat.toMap()
+    for (key in keys) {
+        repeat.remove(key)
     }
+    return repeat
 }
 
 /**
@@ -360,14 +355,14 @@ fun extractRepeats(list: List<String>): Map<String, Int> {
  */
 fun hasAnagrams(words: List<String>): Boolean {
     var f = 0
-    var n :List<Char>
-    var n1 :List<Char>
-    for (i in 0 until words.size - 1) {
-        n = words[i].toList().sorted()
-        for (j in i + 1 until words.size) {
-            n1 = words[j].toList().sorted()
-            if (n == n1) f++
-        }
+    val decomposition = mutableMapOf<String, Int>()
+    for (element in words) {
+        val n: String
+        n = element.toList().sorted().joinToString()
+        decomposition[n] = decomposition.getOrDefault(n, 0) + 1
+    }
+    for ((symbols, number) in decomposition) {
+        if (number > 1) f++
         if (f > 0) break
     }
     return f > 0
@@ -420,26 +415,28 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
  *   ) -> emptySet()
  */
 fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {
-    val map = treasures.toMutableMap()
     val inventory = mutableSetOf<String>()
-    var mass = capacity
-    var value = -1
-    var name = ""
-    var weight = 0
-    while (map.isNotEmpty()) {
-        for ((a, b) in map) {
-            if (b.second > value) {
-                value = b.second
-                name = a
-                weight = b.first
-            }
-        }
-        if (mass - weight >= 0) {
-            inventory.add(name)
-            mass = mass - weight
-        }
-        value = -1
-        map.remove(name)
+    val value = mutableListOf<Int>()
+    val weight = mutableListOf<Int>()
+    var massive = Array(treasures.size + 1) { Array(capacity + 1) { 0 } }
+    for ((a, b) in treasures) {
+        weight.add(b.first)
+        value.add(b.second)
     }
+    for (i in 1..treasures.size) {
+        for (j in 0..capacity) {
+            if (weight[i - 1] > j) massive[i][j] = massive[i - 1][j]
+            else massive[i][j] = max(massive[i - 1][j], massive[i - 1][j - weight[i - 1]] + value[i - 1])
+        }
+    }
+    fun things(i: Int, j: Int) {
+        if (i != 0 && j != 0)
+            if (massive[i - 1][j] == massive[i][j]) things(i - 1, j)
+            else {
+                things(i - 1, j - weight[i - 1])
+                inventory.add(treasures.keys.toList()[i - 1])
+            }
+    }
+    things(treasures.size, capacity)
     return inventory
 }
