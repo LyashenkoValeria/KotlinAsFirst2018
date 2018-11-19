@@ -226,6 +226,25 @@ class Tests {
                         )
                 )
         )
+        assertEquals(
+                mapOf(
+                        "135" to setOf(),
+                        "2b7" to setOf("135", "1", "0", "123"),
+                        "1" to setOf("2b7", "135", "123", "0"),
+                        "123" to setOf("135"),
+                        "0" to setOf("2b7", "135", "1", "123")
+                ),
+                propagateHandshakes(
+                        mapOf(
+                                "135" to setOf(),
+                                "2b7" to setOf("135", "1", "0"),
+                                "1" to setOf("2b7", "135", "123"),
+                                "123" to setOf("135"),
+                                "0" to setOf("2b7")
+
+                        )
+                )
+        )
     }
 
     @Test

@@ -241,27 +241,23 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
  *        )
  */
 fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> {
-    var hands: Set<String>
-    val name = mutableMapOf<String, Set<String>>()
-    var noFriends = setOf<String>()
-    for ((a, b) in friends) {
-        noFriends += a
-        if (b.isEmpty()) name[a] = setOf() else {
-            hands = b
-            for (element in b) {
-                noFriends += element
-                if (element in friends)
-                    hands += friends[element]!!.toSet()
-            }
-            val list = hands.sorted()
-            hands = list.toSet()
-            name[a] = (hands - a)
+    val hands = mutableMapOf<String, MutableSet<String>>()
+    for ((human, people) in friends) {
+        hands[human] = people.toMutableSet()
+        for (element in people) {
+            if (element !in hands) hands[element] = mutableSetOf()
         }
     }
-    for (element in noFriends) {
-        if (element !in name) name[element] = setOf()
+    for ((human, friend) in hands) {
+        for (element in friend) {
+            val n = hands[human]!!.toList() + hands[element]!!.toList()
+            hands[human] = n.toMutableSet()
+        }
     }
-    return name.toMap()
+    for ((a,b) in hands) {
+        hands[a] = (b - a).toMutableSet()
+    }
+    return hands
 }
 
 /**
@@ -331,7 +327,7 @@ fun canBuildFrom(chars: List<Char>, word: String): Boolean {
  */
 fun extractRepeats(list: List<String>): Map<String, Int> {
     val repeat = mutableMapOf<String, Int>()
-    var keys = mutableListOf<String>()
+    val keys = mutableListOf<String>()
     for (element in list) {
         repeat[element] = repeat.getOrDefault(element, 0) + 1
     }
@@ -357,11 +353,10 @@ fun hasAnagrams(words: List<String>): Boolean {
     var f = 0
     val decomposition = mutableMapOf<String, Int>()
     for (element in words) {
-        val n: String
-        n = element.toList().sorted().joinToString()
+        val n:String = element.toList().sorted().joinToString()
         decomposition[n] = decomposition.getOrDefault(n, 0) + 1
     }
-    for ((symbols, number) in decomposition) {
+    for ((_, number) in decomposition) {
         if (number > 1) f++
         if (f > 0) break
     }
@@ -418,8 +413,8 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
     val inventory = mutableSetOf<String>()
     val value = mutableListOf<Int>()
     val weight = mutableListOf<Int>()
-    var massive = Array(treasures.size + 1) { Array(capacity + 1) { 0 } }
-    for ((a, b) in treasures) {
+    val massive = Array(treasures.size + 1) { Array(capacity + 1) { 0 } }
+    for ((_, b) in treasures) {
         weight.add(b.first)
         value.add(b.second)
     }
