@@ -258,6 +258,7 @@ class Tests {
                 emptyList<String>(),
                 whoAreInBoth(listOf("Marat", "Mikhail"), listOf("Sveta", "Kirill"))
         )
+
     }
 
     @Test
@@ -325,6 +326,14 @@ class Tests {
                 bagPacking(
                         mapOf("Кубок" to (500 to 2000), "Слиток" to (1000 to 5000)),
                         450
+                )
+        )
+        assertEquals(
+                setOf("1", "0"),
+                bagPacking(
+                        mapOf("0" to (1 to 1), "1" to (1 to 148), "2" to (284 to 174), "3" to (149 to 54),
+                                "4" to (148 to 148), "5" to (328 to 148), "6" to (2 to 149), "7" to (202 to 2)),
+                        2
                 )
         )
     }

@@ -95,20 +95,19 @@ fun buildWordSet(text: List<String>): MutableSet<String> {
  *   ) -> mapOf("Emergency" to "112, 911", "Police" to "02")
  */
 fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> {
-    val phone = mutableMapOf<String, MutableList<String>>()
+    val phone = mutableMapOf<String, MutableSet<String>>()
     val phone1 = mutableMapOf<String, String>()
     for ((a, b) in mapA) {
-        if (a !in phone) phone[a] = mutableListOf(b) else
-            if ((a in phone) && (b !in phone[a]!!)) phone[a]!!.add(b)
+        phone.getOrPut(a, ::mutableSetOf).add(b)
     }
     for ((a, b) in mapB) {
-        if (a !in phone) phone[a] = mutableListOf(b) else
+        if (a !in phone) phone.getOrPut(a, ::mutableSetOf).add(b) else
             if ((a in phone) && (b !in phone[a]!!)) phone[a]!!.add(b)
     }
     for ((a, b) in phone) {
         phone1[a] = b.joinToString(separator = ", ")
     }
-    return phone1.toMap()
+    return phone1
 }
 
 /**
@@ -124,13 +123,13 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
 fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
     val marks = mutableMapOf<Int, MutableList<String>>()
     for ((surname, m) in grades) {
-        if (m !in marks) marks[m] = mutableListOf(surname)
-        else {
-            marks[m]!!.add(surname)
-            marks[m] = marks[m]!!.sortedDescending().toMutableList()
-        }
+        if (m !in marks) marks.getOrPut(m, ::mutableListOf).add(surname)
+        else marks[m]!!.add(surname)
     }
-    return marks.toMap()
+    for ((surname, m) in grades) {
+        marks[m] = marks[m]!!.sortedDescending().toMutableList()
+    }
+    return marks
 }
 
 /**
@@ -437,7 +436,7 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
         }
         if (mass - weight >= 0) {
             inventory.add(name)
-            mass = mass - weight
+            mass -= weight
         }
         value = -1
         map.remove(name)
