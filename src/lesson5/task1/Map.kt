@@ -98,17 +98,13 @@ fun buildWordSet(text: List<String>): MutableSet<String> {
  */
 fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> {
     val phone = mutableMapOf<String, MutableSet<String>>()
-    val phone1 = mutableMapOf<String, String>()
     for ((a, b) in mapA) {
         phone.getOrPut(a, ::mutableSetOf).add(b)
     }
     for ((a, b) in mapB) {
         phone.getOrPut(a, ::mutableSetOf).add(b)
     }
-    for ((a, b) in phone) {
-        phone1[a] = b.joinToString(separator = ", ")
-    }
-    return phone1
+    return phone.mapValues { (_, value) -> value.joinToString(separator = ", ") }
 }
 
 /**
@@ -240,25 +236,7 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
  *          "Mikhail" to setOf("Sveta", "Marat")
  *        )
  */
-fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> {
-    val hands = mutableMapOf<String, MutableSet<String>>()
-    for ((human, people) in friends) {
-        hands[human] = people.toMutableSet()
-        for (element in people) {
-            if (element !in hands) hands[element] = mutableSetOf()
-        }
-    }
-    for ((human, friend) in hands) {
-        for (element in friend) {
-            val n = hands[human]!!.toList() + hands[element]!!.toList()
-            hands[human] = n.toMutableSet()
-        }
-    }
-    for ((a,b) in hands) {
-        hands[a] = (b - a).toMutableSet()
-    }
-    return hands
-}
+fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> = TODO()
 
 /**
  * Простая
