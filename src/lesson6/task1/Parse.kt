@@ -81,7 +81,7 @@ fun dateStrToDigit(str: String): String {
         if (parts[1] in month) numberOfMonth = month.indexOf(parts[1]) + 1 else
             throw Exception()
         if (parts[0].toInt() > daysInMonth(numberOfMonth, parts[2].toInt())) throw Exception()
-        String.format("%02d.%02d.%02d", parts[0].toInt(), numberOfMonth, parts[2].toInt())
+        String.format("%02d.%02d.%d", parts[0].toInt(), numberOfMonth, parts[2].toInt())
     } catch (e: Exception) {
         ""
     }
@@ -153,9 +153,10 @@ fun flattenPhoneNumber(phone: String): String {
 fun bestLongJump(jumps: String): Int {
     if (Regex("""[^-%\s0-9]""") in jumps) return -1
     var result = jumps
-    result = Regex("""[-%\s]""").replace(result, " ")
-    result = Regex("""(\s)+""").replace(result, ".")
-    val parts = result.split(".")
+    result = Regex("""[-%\s]""").replace(result, ".")
+    result = Regex("""(\.)+""").replace(result, " ")
+    result = result.trim()
+    val parts = result.split(" ")
     var max = 0
     try {
         for (i in parts) {
@@ -192,7 +193,7 @@ fun bestHighJump(jumps: String): Int {
     } catch (e: Exception) {
         return -1
     }
-    return max
+    return if (max == 0) -1 else max
 }
 
 /**
