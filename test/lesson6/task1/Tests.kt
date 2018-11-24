@@ -145,5 +145,6 @@ class Tests {
         assertThrows(IllegalArgumentException::class.java) { computeDeviceCells(10, "+>+>[+>", 3) }
         assertThrows(IllegalStateException::class.java) { computeDeviceCells(20, ">>>>>>>>>>>>>", 12) }
         assertThrows(IllegalArgumentException::class.java) { computeDeviceCells(800, "<-+] < << [------<++", 100) }
+        assertThrows(IllegalArgumentException::class.java) { computeDeviceCells(2, "-[+-<+--<-+<+>-<---+-+[ <[--<---> --+<-[<<+-><<<+-<-->+<-]>[<<]<+]<+++]-- <>]-]<---+<]+<--<><++->--+<-<<<<- [<--- -+<- +++<[-[++<<>- ->] -", 10000) }
     }
 }
