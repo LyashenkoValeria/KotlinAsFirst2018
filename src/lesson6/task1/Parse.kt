@@ -339,6 +339,7 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
                 if (list[number] == 0) {
                     while (pair >= 0) {
                         lastCommand++
+                        if (lastCommand >= commands.length) throw IllegalArgumentException()
                         find(commands[lastCommand])
                     }
                 }
@@ -348,6 +349,7 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
                 if (list[number] != 0) {
                     while (pair <= 0) {
                         lastCommand--
+                        if (lastCommand < 0) throw IllegalArgumentException()
                         find(commands[lastCommand])
                     }
                 }
