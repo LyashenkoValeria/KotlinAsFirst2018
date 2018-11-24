@@ -213,7 +213,7 @@ fun plusMinus(expression: String): Int {
     var sum = 0
     try {
         val parts = result.split("+")
-        for (i in parts){
+        for (i in parts) {
             sum += i.toInt()
         }
     } catch (e: Exception) {
@@ -309,4 +309,53 @@ fun fromRoman(roman: String): Int = TODO()
  * IllegalArgumentException должен бросаться даже если ошибочная команда не была достигнута в ходе выполнения.
  *
  */
-fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> = TODO()
+fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
+    val list = mutableListOf<Int>()
+    var lastCommand = 0
+    var countLimit = 0
+    var number = cells / 2
+    var pair = 0
+    for (i in 0 until cells) {
+        list.add(0)
+    }
+    if (Regex("""[^\+\-\[\]><\s]""") in commands) throw IllegalArgumentException()
+    fun find(element: Char) {
+        if (element == '[') pair++
+        if (element == ']') pair--
+    }
+    for (element in commands) {
+        find(element)
+    }
+    if (pair != 0) throw IllegalArgumentException()
+    while (countLimit < limit && lastCommand < commands.length) {
+        if (number < 0 || number >= cells) throw IllegalStateException()
+        when (commands[lastCommand]) {
+            ' ' -> number
+            '>' -> number++
+            '<' -> number--
+            '+' -> list[number]++
+            '-' -> list[number]--
+            '[' -> {
+                if (list[number] == 0) {
+                    while (pair >= 0) {
+                        lastCommand++
+                        find(commands[lastCommand])
+                    }
+                }
+                pair = 0
+            }
+            ']' -> {
+                if (list[number] != 0) {
+                    while (pair <= 0) {
+                        lastCommand--
+                        find(commands[lastCommand])
+                    }
+                }
+                pair = 0
+            }
+        }
+        lastCommand++
+        countLimit++
+    }
+return list
+}
