@@ -56,7 +56,6 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
  */
 fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> = TODO()
 
-
 /**
  * Средняя
  *
