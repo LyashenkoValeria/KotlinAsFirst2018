@@ -76,14 +76,17 @@ data class Circle(val center: Point, val radius: Double) {
      * расстояние между их центрами минус сумма их радиусов.
      * Расстояние между пересекающимися окружностями считать равным 0.0.
      */
-    fun distance(other: Circle): Double = TODO()
+    fun distance(other: Circle): Double {
+        return if (center.distance(other.center) - (radius + other.radius) < 0) 0.0
+        else center.distance(other.center) - (radius + other.radius)
+    }
 
     /**
      * Тривиальная
      *
      * Вернуть true, если и только если окружность содержит данную точку НА себе или ВНУТРИ себя
      */
-    fun contains(p: Point): Boolean = TODO()
+    fun contains(p: Point): Boolean = (p.distance(center) <= radius)
 }
 
 /**
@@ -103,7 +106,22 @@ data class Segment(val begin: Point, val end: Point) {
  * Дано множество точек. Вернуть отрезок, соединяющий две наиболее удалённые из них.
  * Если в множестве менее двух точек, бросить IllegalArgumentException
  */
-fun diameter(vararg points: Point): Segment = TODO()
+fun diameter(vararg points: Point): Segment {
+    var p1 = Point(0.0,0.0)
+    var p2 = Point(0.0,0.0)
+    var maxDistance = p1.distance(p2)
+    if (points.size < 2) throw IllegalArgumentException()
+    else for (i in 0 until points.size - 1) {
+        for (j in i + 1 until points.size) {
+            if (maxDistance < points[i].distance(points[j])) {
+                maxDistance = points[i].distance(points[j])
+                p1 = points[i]
+                p2 = points[j]
+            }
+        }
+    }
+    return Segment(p1, p2)
+}
 
 /**
  * Простая
@@ -111,7 +129,11 @@ fun diameter(vararg points: Point): Segment = TODO()
  * Построить окружность по её диаметру, заданному двумя точками
  * Центр её должен находиться посередине между точками, а радиус составлять половину расстояния между ними
  */
-fun circleByDiameter(diameter: Segment): Circle = TODO()
+fun circleByDiameter(diameter: Segment): Circle {
+    val radius = diameter.begin.distance(diameter.end) / 2
+    val center = Point((diameter.begin.x + diameter.end.x) / 2, (diameter.begin.y + diameter.end.y) / 2)
+    return Circle(center, radius)
+}
 
 /**
  * Прямая, заданная точкой point и углом наклона angle (в радианах) по отношению к оси X.
