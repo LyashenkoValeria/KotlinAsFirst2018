@@ -179,22 +179,7 @@ fun bestLongJump(jumps: String): Int {
  * Прочитать строку и вернуть максимальную взятую высоту (230 в примере).
  * При нарушении формата входной строки вернуть -1.
  */
-fun bestHighJump(jumps: String): Int {
-    if (Regex("""[^-%+\s0-9]""") in jumps) return -1
-    var result = jumps
-    result = Regex("""[%\s]""").replace(result, "")
-    result = Regex("""([0-9])+(-)""").replace(result, "")
-    var max = 0
-    try {
-        val parts = result.split("+")
-        for (i in 0 until parts.size - 1) {
-            if (parts[i].toInt() > max) max = parts[i].toInt()
-        }
-    } catch (e: Exception) {
-        return -1
-    }
-    return max
-}
+fun bestHighJump(jumps: String): Int = TODO()
 
 /**
  * Сложная
