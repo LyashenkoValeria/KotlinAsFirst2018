@@ -78,8 +78,8 @@ fun dateStrToDigit(str: String): String {
     val numberOfMonth: Int
     return try {
         if (parts.size != 3) throw Exception()
-        if (parts[1] in month) numberOfMonth = month.indexOf(parts[1]) + 1 else
-            throw Exception()
+        if (parts[1] in month) numberOfMonth = month.indexOf(parts[1]) + 1
+        else throw Exception()
         if (parts[0].toInt() > daysInMonth(numberOfMonth, parts[2].toInt())) throw Exception()
         String.format("%02d.%02d.%d", parts[0].toInt(), numberOfMonth, parts[2].toInt())
     } catch (e: Exception) {
@@ -130,8 +130,8 @@ fun flattenPhoneNumber(phone: String): String {
     var result = ""
     for (element in phone) {
         try {
-            if (element in number) result += element else
-                if (element !in symbols) throw Exception()
+            if (element in number) result += element
+            else if (element !in symbols) throw Exception()
         } catch (e: Exception) {
             f++
         }
@@ -193,7 +193,7 @@ fun bestHighJump(jumps: String): Int {
     } catch (e: Exception) {
         return -1
     }
-    return if (max == 0) -1 else max
+    return max
 }
 
 /**
@@ -232,17 +232,15 @@ fun plusMinus(expression: String): Int {
  * Пример: "Он пошёл в в школу" => результат 9 (индекс первого 'в')
  */
 fun firstDuplicateIndex(str: String): Int {
-    var string = str
     var count = 0
     var f = -1
-    var list = str.toLowerCase().split(" ")
+    val list = str.toLowerCase().split(" ")
     for (i in 0 until list.size - 1) {
-        count += 1 + list[i].length
-        string = string.substring(list[i].length + 1, string.length)
         if (list[i] == list[i + 1]) {
-            f = count - list[i].length - 1
+            f = count
             break
         }
+        count += 1 + list[i].length
     }
     return f
 }
@@ -360,5 +358,5 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
         lastCommand++
         countLimit++
     }
-return list
+    return list
 }

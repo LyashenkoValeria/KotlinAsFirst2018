@@ -160,18 +160,13 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
     val stock = mutableMapOf<String, Double>()
     val stockCount = mutableMapOf<String, Int>()
     for ((a, b) in stockPrices) {
-        if (a !in stock) {
-            stock[a] = b
-            stockCount[a] = 1
-        } else {
-            stock[a] = stock[a]!! + b
-            stockCount[a] = stockCount[a]!! + 1
-        }
+        stock[a] = stock.getOrDefault(a, 0.0) + b
+        stockCount[a] = stockCount.getOrDefault(a, 0) + 1
     }
     for ((a, b) in stock) {
         if (a in stockCount) stock[a] = b / stockCount[a]!!
     }
-    return stock.toMap()
+    return stock
 }
 
 /**
@@ -190,21 +185,19 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
  *   ) -> "Мария"
  */
 fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? {
-    val cost = mutableMapOf<String, Double>()
     var name = ""
     var price = 0.0
     for ((a, b) in stuff) {
         if (b.first == kind) {
-            cost[a] = b.second
             price = b.second
             name = a
         }
     }
-    return if (cost.isEmpty()) null
+    return if (name.isEmpty()) null
     else {
-        for ((a, b) in cost) {
-            if (b < price) {
-                price = cost[a]!!
+        for ((a, b) in stuff) {
+            if (b.second < price) {
+                price = b.second
                 name = a
             }
         }
@@ -331,7 +324,7 @@ fun hasAnagrams(words: List<String>): Boolean {
     var f = 0
     val decomposition = mutableMapOf<String, Int>()
     for (element in words) {
-        val n:String = element.toList().sorted().joinToString()
+        val n = element.toList().sorted().joinToString()
         decomposition[n] = decomposition.getOrDefault(n, 0) + 1
     }
     for ((_, number) in decomposition) {
