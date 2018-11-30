@@ -54,16 +54,15 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
  *
  */
 fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
-    var string = File(inputName).readText()
-    string = string.toLowerCase()
     val number = mutableMapOf<String, Int>()
     for (element in substrings) {
         number[element] = 0
     }
     for (element in substrings) {
-        val n = Regex(element.toLowerCase()).findAll(string)
-        for (i in n) {
+        var string = File(inputName).readText().toLowerCase()
+        while (Regex(element.toLowerCase()).find(string) != null) {
             number[element] = number[element]!! + 1
+            string = string.substring(string.indexOf(element.toLowerCase())+1)
         }
     }
     return number
@@ -125,11 +124,7 @@ fun centerFile(inputName: String, outputName: String) {
     for (line in File(inputName).readLines()) {
         var string = line.trim()
         var count = string.length
-        while (count < maxLength) {
-            string = " $string"
-            count += 2
-        }
-        if (count != maxLength) string = string.substring(1)
+        string = " ".repeat((maxLength - count) / 2) + string
         writer.write(string)
         writer.newLine()
     }

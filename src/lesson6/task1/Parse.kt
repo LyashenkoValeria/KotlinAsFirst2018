@@ -136,7 +136,7 @@ fun flattenPhoneNumber(phone: String): String {
             f++
         }
     }
-    if (f > 0) result = ""
+    if (f > 0 || result.length == 1 && result[0] == '+') result = ""
     return result
 }
 
@@ -157,15 +157,12 @@ fun bestLongJump(jumps: String): Int {
     result = Regex("""(\.)+""").replace(result, " ")
     result = result.trim()
     val parts = result.split(" ")
-    var max = 0
     try {
-        for (i in parts) {
-            if (i.toInt() > max) max = i.toInt()
-        }
+        parts.maxBy { it.toInt() }?.toInt()
     } catch (e: Exception) {
         return -1
     }
-    return max
+    return parts.maxBy { it.toInt() }!!.toInt()
 }
 
 
