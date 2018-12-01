@@ -60,7 +60,7 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
     for (element in substrings) {
         number[element] = 0
     }
-    for (element in substrings) {
+    for ((element,_) in number) {
         var n = 0
         var s1 = string
         while (Regex(element.toLowerCase()).find(s1) != null) {
@@ -129,6 +129,7 @@ fun centerFile(inputName: String, outputName: String) {
         var string = line.trim()
         var count = string.length
         string = " ".repeat((maxLength - count) / 2) + string
+        if (2 * string.length - count > maxLength) string = string.substring(1)
         writer.write(string)
         writer.newLine()
     }
