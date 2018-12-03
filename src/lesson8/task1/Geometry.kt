@@ -174,21 +174,29 @@ class Line private constructor(val b: Double, val angle: Double) {
  *
  * Построить прямую по отрезку
  */
-fun lineBySegment(s: Segment): Line = TODO()
+fun lineBySegment(s: Segment): Line {
+    var angle = (atan2(s.end.y - s.begin.y, s.end.x - s.begin.x)) % PI
+    return Line(s.begin, angle)
+}
 
 /**
  * Средняя
  *
  * Построить прямую по двум точкам
  */
-fun lineByPoints(a: Point, b: Point): Line = TODO()
+fun lineByPoints(a: Point, b: Point): Line = lineBySegment(Segment(a, b))
+
 
 /**
  * Сложная
  *
  * Построить серединный перпендикуляр по отрезку или по двум точкам
  */
-fun bisectorByPoints(a: Point, b: Point): Line = TODO()
+fun bisectorByPoints(a: Point, b: Point): Line {
+    val p = Point((b.x + a.x) / 2, (b.y + a.y) / 2)
+    val angle = (atan2(a.y - b.y, a.x - b.x) + PI / 2) % PI
+    return Line(p, angle)
+}
 
 /**
  * Средняя
@@ -196,7 +204,20 @@ fun bisectorByPoints(a: Point, b: Point): Line = TODO()
  * Задан список из n окружностей на плоскости. Найти пару наименее удалённых из них.
  * Если в списке менее двух окружностей, бросить IllegalArgumentException
  */
-fun findNearestCirclePair(vararg circles: Circle): Pair<Circle, Circle> = TODO()
+fun findNearestCirclePair(vararg circles: Circle): Pair<Circle, Circle> {
+    if (circles.size < 2) throw IllegalArgumentException()
+    var pair = Pair(circles[0], circles[1])
+    var min = circles[0].distance(circles[1])
+    for (i in 0 until circles.size - 1) {
+        for (j in i + 1 until circles.size) {
+            if (circles[i].distance(circles[j]) < min) {
+                pair = Pair(circles[i], circles[j])
+                min = circles[i].distance(circles[j])
+            }
+        }
+    }
+    return pair
+}
 
 /**
  * Сложная
@@ -207,7 +228,13 @@ fun findNearestCirclePair(vararg circles: Circle): Pair<Circle, Circle> = TODO()
  * (построить окружность по трём точкам, или
  * построить окружность, описанную вокруг треугольника - эквивалентная задача).
  */
-fun circleByThreePoints(a: Point, b: Point, c: Point): Circle = TODO()
+fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
+    val line1 = bisectorByPoints(a, b)
+    val line2 = bisectorByPoints(a, c)
+    val center = line1.crossPoint(line2)
+    val radius = a.distance(center)
+    return Circle(center, radius)
+}
 
 /**
  * Очень сложная
