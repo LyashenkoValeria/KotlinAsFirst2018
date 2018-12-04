@@ -178,7 +178,7 @@ fun lineBySegment(s: Segment): Line {
     var angle = atan2(s.end.y - s.begin.y, s.end.x - s.begin.x)
     if (angle < 0) angle += PI
     if (angle > PI) angle -= PI
-    return Line(s.begin, angle)
+    return Line(s.begin, angle % PI)
 }
 
 /**
