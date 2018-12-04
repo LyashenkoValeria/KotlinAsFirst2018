@@ -157,12 +157,11 @@ fun bestLongJump(jumps: String): Int {
     result = Regex("""(\.)+""").replace(result, " ")
     result = result.trim()
     val parts = result.split(" ")
-    try {
-        parts.maxBy { it.toInt() }?.toInt()
+    return try {
+        parts.maxBy { it.toInt() }!!.toInt()
     } catch (e: Exception) {
         return -1
     }
-    return parts.maxBy { it.toInt() }!!.toInt()
 }
 
 

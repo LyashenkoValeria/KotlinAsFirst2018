@@ -61,12 +61,12 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
         number[element] = 0
     }
     for ((element,_) in number) {
-        var n = 0
         var s1 = string
-        while (Regex(element.toLowerCase()).find(s1) != null) {
+        val elem = element.toLowerCase()
+        var n = 0
+        while (Regex(elem).find(s1, n) != null) {
             number[element] = number[element]!! + 1
-            n = s1.indexOf(element.toLowerCase()) + 1
-            s1 = s1.substring(n)
+            n = Regex(elem).find(s1, n)!!.range.start + 1
         }
     }
     return number
@@ -127,7 +127,7 @@ fun centerFile(inputName: String, outputName: String) {
     }
     for (line in File(inputName).readLines()) {
         var string = line.trim()
-        var count = string.length
+        val count = string.length
         string = " ".repeat((maxLength - count) / 2) + string
         if (2 * string.length - count > maxLength) string = string.substring(1)
         writer.write(string)
