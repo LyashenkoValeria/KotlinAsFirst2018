@@ -36,10 +36,11 @@ data class Square(val column: Int, val row: Int) {
  * Если нотация некорректна, бросить IllegalArgumentException
  */
 fun square(notation: String): Square {
+    if (notation.length != 2) throw IllegalArgumentException()
     val map = mapOf('a' to 1, 'b' to 2, 'c' to 3, 'd' to 4, 'e' to 5, 'f' to 6, 'g' to 7, 'h' to 8)
     val column = notation[0]
     val row = notation[1].toString()
-    if (column !in map && row !in "12345678" && notation.length != 2) throw IllegalArgumentException()
+    if (column !in map && row !in "12345678") throw IllegalArgumentException()
     return Square(map[column]!!, row.toInt())
 }
 
