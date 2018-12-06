@@ -73,10 +73,10 @@ data class Circle(val center: Point, val radius: Double) {
      * расстояние между их центрами минус сумма их радиусов.
      * Расстояние между пересекающимися окружностями считать равным 0.0.
      */
-    fun distance(other: Circle): Double {
-        return if (center.distance(other.center) - (radius + other.radius) < 0) 0.0
-        else center.distance(other.center) - (radius + other.radius)
-    }
+    fun distance(other: Circle): Double =
+            if (center.distance(other.center) - (radius + other.radius) < 0) 0.0
+            else center.distance(other.center) - (radius + other.radius)
+
 
     /**
      * Тривиальная
@@ -104,8 +104,8 @@ data class Segment(val begin: Point, val end: Point) {
  * Если в множестве менее двух точек, бросить IllegalArgumentException
  */
 fun diameter(vararg points: Point): Segment {
-    var p1 = Point(0.0,0.0)
-    var p2 = Point(0.0,0.0)
+    var p1 = Point(0.0, 0.0)
+    var p2 = Point(0.0, 0.0)
     var maxDistance = p1.distance(p2)
     if (points.size < 2) throw IllegalArgumentException()
     else for (i in 0 until points.size - 1) {
@@ -259,7 +259,7 @@ fun minContainingCircle(vararg points: Point): Circle {
     fun pointsInCircle(circle: Circle, p: Array<out Point>): Int {
         var count = 0
         for (i in 0 until p.size) {
-            if (p[i].distance(circle.center) <= circle.radius) count++
+            if (circle.contains(p[i])) count++
         }
         return count
     }
