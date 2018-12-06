@@ -3,6 +3,7 @@
 package lesson7.task1
 
 import java.io.File
+import java.lang.StringBuilder
 
 /**
  * Пример
@@ -54,19 +55,19 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
  *
  */
 fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
-    var string = File(inputName).readText()
-    string = string.toLowerCase()
+    val string = File(inputName).readText().toLowerCase()
     val number = mutableMapOf<String, Int>()
     for (element in substrings) {
         number[element] = 0
     }
     for ((element,_) in number) {
-        var s1 = string
         val elem = element.toLowerCase()
         var n = 0
-        while (Regex(elem).find(s1, n) != null) {
+        var find = Regex(elem).find(string, n)
+        while (find != null) {
             number[element] = number[element]!! + 1
-            n = Regex(elem).find(s1, n)!!.range.start + 1
+            n = find.range.start + 1
+            find = Regex(elem).find(string, n)
         }
     }
     return number
@@ -87,16 +88,18 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
  *
  */
 fun sibilants(inputName: String, outputName: String) {
-    val vowels = mapOf<Char, Char>('я' to 'а', 'Я' to 'А', 'ы' to 'и', 'Ы' to 'И', 'ю' to 'у', 'Ю' to 'У')
+    val vowels = mapOf('я' to 'а', 'Я' to 'А', 'ы' to 'и', 'Ы' to 'И', 'ю' to 'у', 'Ю' to 'У')
     val consonants = "жЖчЧшШщЩ"
     val writer = File(outputName).bufferedWriter()
     for (line in File(inputName).readLines()) {
-        var string = line[0].toString()
-        for (i in 1 until line.length) {
-            string += if (line[i] in vowels && line[i - 1] in consonants) vowels[line[i]].toString()
-            else line[i].toString()
-        }
-        writer.write(string)
+        if (line.isNotEmpty()) {
+            val string = StringBuilder(line[0].toString())
+            for (i in 1 until line.length) {
+                if (line[i] in vowels && line[i - 1] in consonants) string.append(vowels[line[i]].toString())
+                else string.append(line[i].toString())
+            }
+            writer.write(string.toString())
+        } else writer.write(line)
         writer.newLine()
     }
     writer.close()
@@ -122,10 +125,11 @@ fun sibilants(inputName: String, outputName: String) {
 fun centerFile(inputName: String, outputName: String) {
     var maxLength = -1
     val writer = File(outputName).bufferedWriter()
-    for (line in File(inputName).readLines()) {
+    val reader = File(inputName).readLines()
+    for (line in reader) {
         if (line.trim().length > maxLength) maxLength = line.trim().length
     }
-    for (line in File(inputName).readLines()) {
+    for (line in reader) {
         var string = line.trim()
         val count = string.length
         string = " ".repeat((maxLength - count) / 2) + string
@@ -167,11 +171,12 @@ fun alignFileByWidth(inputName: String, outputName: String) {
     val writer = File(outputName).bufferedWriter()
     var maxLength = -1
     var string = ""
-    for (line in File(inputName).readLines()) {
+    val reader = File(inputName).readLines()
+    for (line in reader) {
         string = Regex("""(\s)+""").replace(line, " ").trim()
         if (string.length > maxLength) maxLength = string.length
     }
-    for (line in File(inputName).readLines()) {
+    for (line in reader) {
         string = Regex("""(\s)+""").replace(line, " ").trim()
         if (string.length <= maxLength) {
             val list = string.split(" ").toMutableList()
