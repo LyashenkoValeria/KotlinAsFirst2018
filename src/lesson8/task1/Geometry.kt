@@ -177,7 +177,7 @@ class Line private constructor(val b: Double, val angle: Double) {
 fun lineBySegment(s: Segment): Line {
     var angle = atan2(s.end.y - s.begin.y, s.end.x - s.begin.x)
     if (angle < 0) angle += PI
-    if (angle > PI) angle -= PI
+    if (angle >= PI) angle -= PI
     return Line(s.begin, angle % PI)
 }
 
@@ -198,7 +198,7 @@ fun bisectorByPoints(a: Point, b: Point): Line {
     val p = Point((b.x + a.x) / 2, (b.y + a.y) / 2)
     var angle = atan2(a.y - b.y, a.x - b.x) + PI / 2
     if (angle < 0) angle += PI
-    if (angle > PI) angle -= PI
+    if (angle >= PI) angle -= PI
     return Line(p, angle % PI)
 }
 
@@ -236,7 +236,7 @@ fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
     val line1 = bisectorByPoints(a, b)
     val line2 = bisectorByPoints(b, c)
     val center = line1.crossPoint(line2)
-    val radius = a.distance(center)
+    val radius = maxOf(a.distance(center), b.distance(center), c.distance(center))
     return Circle(center, radius)
 }
 
